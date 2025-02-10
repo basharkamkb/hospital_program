@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management with Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script defer src="script.js"></script> 
+    <link rel="stylesheet" href="style.css">
+
+    
+</head>
+<body>
+    <h1>Inventory Management</h1>
+
+    <!-- Search -->
+    <input type="text" id="search" placeholder="Search by Code or desc">
+    <button onclick="loadItems()">Search</button>
+
+    <!-- Add/Edit Form -->
+    <div>
+        <input type="hidden" id="item_id">
+        <input type="text" id="code" placeholder="Code">
+        <input type="text" id="desc" placeholder="desc">
+        <input type="number" id="maxqty" placeholder="Max Quantity">
+        <input type="number" id="physical" placeholder="Physical Quantity">
+        <button onclick="addItem()">Save</button>
+        <button onclick="clearForm()">Clear</button>
+    </div>
+
+    <!-- Inventory Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>desc</th>
+                <th>Max Qty</th>
+                <th>Physical Qty</th>
+                <th>Difference</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="inventory-list"></tbody>
+    </table>
+</body>
+</html>
