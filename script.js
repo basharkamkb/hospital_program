@@ -12,14 +12,18 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 document.addEventListener("DOMContentLoaded", async () => {
     await loadItems();
 });
-
-// ✅ Function to load inventory from Supabase
+// ✅ Function to load inventory from Supabase and filter by search & wing
 async function loadItems() {
     let searchQuery = document.getElementById("search").value.trim();
+    let selectedWing = document.getElementById("wingFilter").value; // Get selected wing
+
     let query = supabase.from("inventory").select("*");
 
     if (searchQuery) {
         query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
+    }
+    if (selectedWing) {
+        query = query.eq("wing", selectedWing); // Filter by selected wing
     }
 
     let { data, error } = await query;
@@ -34,14 +38,14 @@ async function loadItems() {
     data.forEach(item => {
         let row = document.createElement("tr");
         row.innerHTML = `
-            <td>${item.id}</td>
             <td>${item.code}</td>
             <td>${item.desc}</td>
             <td>${item.maxqty}</td>
             <td>${item.physical}</td>
-            <td>${item.maxqty - item.physical}</td>
+            <td>${item.diff}</td>
+            <td>${item.wing}</td>
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical})">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
@@ -56,13 +60,14 @@ async function addItem() {
     let desc = document.getElementById("desc").value;
     let maxqty = parseInt(document.getElementById("maxqty").value);
     let physical = parseInt(document.getElementById("physical").value);
+    let wing = document.getElementById("wing").value;
 
     if (!code || !desc || isNaN(maxqty) || isNaN(physical)) {
         alert("Please fill in all fields!");
         return;
     }
 
-    let data = { code, desc, maxqty, physical, diff: maxqty - physical };
+    let data = { code, desc, maxqty, physical, diff: maxqty - physical, wing };
 
     if (id) {
         let { error } = await supabase.from("inventory").update(data).eq("id", id);
@@ -83,12 +88,13 @@ async function addItem() {
 }
 
 // ✅ Function to edit an item (populate form)
-function editItem(id, code, desc, maxqty, physical) {
+function editItem(id, code, desc, maxqty, physical, wing) {
     document.getElementById("item_id").value = id;
     document.getElementById("code").value = code;
     document.getElementById("desc").value = desc;
     document.getElementById("maxqty").value = maxqty;
     document.getElementById("physical").value = physical;
+    document.getElementById("wing").value = wing;
 }
 
 // ✅ Function to delete an item
@@ -108,6 +114,7 @@ function clearForm() {
     document.getElementById("desc").value = "";
     document.getElementById("maxqty").value = "";
     document.getElementById("physical").value = "";
+    document.getElementById("wing").value = "Adult ICU";
 }
 
 // ✅ Load inventory on page load
