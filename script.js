@@ -135,7 +135,14 @@ function editItem(id, code, desc, maxqty, physical, wing) {
     document.getElementById("desc").value = desc;
     document.getElementById("maxqty").value = maxqty;
     document.getElementById("physical").value = physical;
-    document.getElementById("wing").value = wing || "Adult ICU"; // ✅ Populate Wing field
+    
+    let wingDropdown = document.getElementById("wing"); // ✅ Get the Wing dropdown
+    if (wingDropdown) {
+        wingDropdown.value = wing || "Adult ICU"; // ✅ Assign value if element exists
+    } else {
+        console.error("Wing dropdown not found in the HTML.");
+    }
+}
 }
 
 // ✅ Function to delete an item
