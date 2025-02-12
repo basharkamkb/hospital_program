@@ -160,7 +160,7 @@ function editItem(id, code, desc, maxqty, physical, wing) {
         console.error("Wing dropdown not found in the HTML.");
     }
 }
-}
+
 
 // ✅ Function to delete an item
 async function deleteItem(id) {
