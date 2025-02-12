@@ -59,7 +59,6 @@ async function loadItems() {
         tbody.appendChild(row);
     });
 }
-
 // ✅ Function to update the "Physical" quantity and recalculate "Difference"
 async function updatePhysical(id, newPhysical, maxqty) {
     let physical = parseInt(newPhysical);
@@ -68,17 +67,35 @@ async function updatePhysical(id, newPhysical, maxqty) {
         return;
     }
 
-    let diff = maxqty - physical; // ✅ Difference is recalculated but maxqty stays the same
+    let diff = maxqty - physical; // ✅ Difference is recalculated
 
-    let { error } = await supabase.from("inventory").update({ physical, diff }).eq("id", id);
+    // ✅ Fetch the full record first to preserve all fields
+    let { data, error } = await supabase.from("inventory").select("*").eq("id", id).single();
     if (error) {
-        console.error("Error updating physical quantity:", error);
+        console.error("Error fetching item before update:", error);
+        return;
+    }
+
+    // ✅ Ensure we update only "physical" and "diff" without deleting other fields
+    let updatedData = {
+        code: data.code,
+        desc: data.desc,
+        maxqty: data.maxqty,
+        physical: physical, // ✅ Update physical
+        diff: diff, // ✅ Update difference
+        wing: data.wing
+    };
+
+    let { error: updateError } = await supabase.from("inventory").update(updatedData).eq("id", id);
+    if (updateError) {
+        console.error("Error updating physical quantity:", updateError);
         return;
     }
 
     // ✅ Update "Difference" column dynamically without reloading
     document.getElementById(`diff-${id}`).textContent = diff;
 }
+
 
 async function addItem() {
     let idField = document.getElementById("item_id");
