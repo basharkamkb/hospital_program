@@ -80,14 +80,27 @@ async function updatePhysical(id, newPhysical, maxqty) {
     document.getElementById(`diff-${id}`).textContent = diff;
 }
 
-// ✅ Function to add or update an inventory item
 async function addItem() {
-    let id = document.getElementById("item_id").value;
-    let code = document.getElementById("code").value;
-    let desc = document.getElementById("desc").value;
-    let maxqty = parseInt(document.getElementById("maxqty").value); // ✅ Max Qty stays unchanged
-    let physical = parseInt(document.getElementById("physical").value);
-    let wing = document.getElementById("wing").value; // ✅ Get Wing value
+    let idField = document.getElementById("item_id");
+    let codeField = document.getElementById("code");
+    let descField = document.getElementById("desc");
+    let maxqtyField = document.getElementById("maxqty");
+    let physicalField = document.getElementById("physical");
+    let wingField = document.getElementById("wing");
+
+    // ✅ Check if fields exist before accessing .value
+    if (!codeField || !descField || !maxqtyField || !physicalField || !wingField) {
+        console.error("One or more input fields are missing in the HTML.");
+        alert("Error: Some input fields are missing. Please check the form.");
+        return;
+    }
+
+    let id = idField.value;
+    let code = codeField.value.trim();
+    let desc = descField.value.trim();
+    let maxqty = parseInt(maxqtyField.value);
+    let physical = parseInt(physicalField.value);
+    let wing = wingField.value;
 
     if (!code || !desc || isNaN(maxqty) || isNaN(physical)) {
         alert("Please fill in all fields!");
@@ -95,26 +108,25 @@ async function addItem() {
     }
 
     let diff = maxqty - physical; // ✅ Difference is calculated but maxqty stays the same
-
     let data = { code, desc, maxqty, physical, diff, wing }; // ✅ Include Wing in data
 
-    if (id) {
-        let { error } = await supabase.from("inventory").update(data).eq("id", id);
-        if (error) {
-            console.error("Error updating item:", error);
-            return;
+    try {
+        if (id) {
+            let { error } = await supabase.from("inventory").update(data).eq("id", id);
+            if (error) throw error;
+        } else {
+            let { error } = await supabase.from("inventory").insert([data]);
+            if (error) throw error;
         }
-    } else {
-        let { error } = await supabase.from("inventory").insert([data]);
-        if (error) {
-            console.error("Error adding item:", error);
-            return;
-        }
-    }
 
-    clearForm();
-    loadItems();
+        clearForm();
+        loadItems();
+    } catch (error) {
+        console.error("Error saving item:", error);
+        alert("Error saving item. Please check the console for details.");
+    }
 }
+
 
 // ✅ Function to edit an item (populate form)
 function editItem(id, code, desc, maxqty, physical, wing) {
