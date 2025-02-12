@@ -14,17 +14,8 @@
     <h1>Inventory Management</h1>
 
     <!-- Search -->
-    <div class="search-section">
-        <button onclick="loadItems()">Search</button>
-        <input type="text" id="search" placeholder="Search by Code or Description">
-        <select id="wingFilter" onchange="loadItems()">
-            <option value="">All Wings</option>
-            <option value="Adult ICU">Adult ICU</option>
-            <option value="Maternity 1">Maternity 1</option>
-            <option value="Maternity 2">Maternity 2</option>
-        </select>
-        
-    </div>
+    <input type="text" id="search" placeholder="Search by Code or desc">
+    <button onclick="loadItems()">Search</button>
 
     <!-- Add/Edit Form -->
     <div>
@@ -33,11 +24,6 @@
         <input type="text" id="desc" placeholder="desc">
         <input type="number" id="maxqty" placeholder="Max Quantity">
         <input type="number" id="physical" placeholder="Physical Quantity">
-        <select id="wing">
-            <option value="Adult ICU">Adult ICU</option>
-            <option value="Maternity 1">Maternity 1</option>
-            <option value="Maternity 2">Maternity 2</option>
-        </select>
         <button onclick="addItem()">Save</button>
         <button onclick="clearForm()">Clear</button>
     </div>
@@ -46,12 +32,12 @@
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Code</th>
-                <th>Description</th>
+                <th>desc</th>
                 <th>Max Qty</th>
                 <th>Physical Qty</th>
                 <th>Difference</th>
-                <th>Wing</th>
                 <th>Actions</th>
             </tr>
         </thead>
