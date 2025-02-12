@@ -142,7 +142,7 @@ async function addItem() {
         console.error("Error saving item:", error);
         alert("Error saving item. Please check the console for details.");
     }
-}
+
 
 
 // ✅ Function to edit an item (populate form)
