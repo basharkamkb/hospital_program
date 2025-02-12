@@ -19,7 +19,7 @@ async function loadItems() {
     let searchQuery = document.getElementById("search")?.value.trim();
     let selectedWing = document.getElementById("wingFilter")?.value; // ✅ Get selected wing filter
 
-    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing"); // ✅ Explicitly selecting "wing" field
+    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing"); // ✅ Ensure wing is selected
 
     if (searchQuery) {
         query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
@@ -50,7 +50,7 @@ async function loadItems() {
                     onchange="updatePhysical(${item.id}, this.value, ${item.maxqty})">
             </td>
             <td id="diff-${item.id}">${item.diff}</td>
-            <td>${item.wing || "N/A"}</td> <!-- ✅ Ensured Wing is displayed -->
+            <td>${item.wing || "N/A"}</td> 
             <td>
                 <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
@@ -60,7 +60,7 @@ async function loadItems() {
     });
 }
 
-// ✅ Function to update the "Physical" quantity in Supabase when edited
+// ✅ Function to update the "Physical" quantity and recalculate "Difference"
 async function updatePhysical(id, newPhysical, maxqty) {
     let physical = parseInt(newPhysical);
     if (isNaN(physical) || physical < 0) {
@@ -68,7 +68,7 @@ async function updatePhysical(id, newPhysical, maxqty) {
         return;
     }
 
-    let diff = maxqty - physical;
+    let diff = maxqty - physical; // ✅ Difference is recalculated but maxqty stays the same
 
     let { error } = await supabase.from("inventory").update({ physical, diff }).eq("id", id);
     if (error) {
@@ -85,7 +85,7 @@ async function addItem() {
     let id = document.getElementById("item_id").value;
     let code = document.getElementById("code").value;
     let desc = document.getElementById("desc").value;
-    let maxqty = parseInt(document.getElementById("maxqty").value);
+    let maxqty = parseInt(document.getElementById("maxqty").value); // ✅ Max Qty stays unchanged
     let physical = parseInt(document.getElementById("physical").value);
     let wing = document.getElementById("wing").value; // ✅ Get Wing value
 
@@ -94,7 +94,9 @@ async function addItem() {
         return;
     }
 
-    let data = { code, desc, maxqty, physical, diff: maxqty - physical, wing }; // ✅ Include Wing in data
+    let diff = maxqty - physical; // ✅ Difference is calculated but maxqty stays the same
+
+    let data = { code, desc, maxqty, physical, diff, wing }; // ✅ Include Wing in data
 
     if (id) {
         let { error } = await supabase.from("inventory").update(data).eq("id", id);
