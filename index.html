@@ -27,21 +27,21 @@
         <button onclick="addItem()">Save</button>
         <button onclick="clearForm()">Clear</button>
     </div>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th> <!-- ✅ Added the missing "ID" column -->
+            <th>Code</th>
+            <th>Description</th>
+            <th>Max Qty</th>
+            <th>Physical Qty</th>
+            <th>Difference</th>
+            <th>Wing</th> <!-- ✅ Wing column now correctly displayed -->
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="inventory-list"></tbody>
+</table>
 
-    <!-- Inventory Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Code</th>
-                <th>desc</th>
-                <th>Max Qty</th>
-                <th>Physical Qty</th>
-                <th>Difference</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="inventory-list"></tbody>
-    </table>
 </body>
 </html>
