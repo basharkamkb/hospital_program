@@ -8,6 +8,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // ✅ Initialize Supabase
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+
 // ✅ Load items after the page fully loads
 document.addEventListener("DOMContentLoaded", async () => {
     await loadItems();
@@ -34,7 +35,7 @@ async function loadItems() {
     data.forEach(item => {
         let row = document.createElement("tr");
         row.innerHTML = `
-            <td>${item.id}</td>
+            <td>${item.id}</td> <!-- ✅ Now properly displaying the ID -->
             <td>${item.code}</td>
             <td>${item.desc}</td>
             <td>${item.maxqty}</td>
@@ -43,8 +44,9 @@ async function loadItems() {
                     onchange="updatePhysical(${item.id}, this.value, ${item.maxqty})">
             </td>
             <td id="diff-${item.id}">${item.diff}</td>
+            <td>${item.wing}</td> <!-- ✅ Now properly displaying the Wing -->
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical})">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
@@ -79,13 +81,14 @@ async function addItem() {
     let desc = document.getElementById("desc").value;
     let maxqty = parseInt(document.getElementById("maxqty").value);
     let physical = parseInt(document.getElementById("physical").value);
+    let wing = document.getElementById("wing").value; // ✅ Get Wing value
 
     if (!code || !desc || isNaN(maxqty) || isNaN(physical)) {
         alert("Please fill in all fields!");
         return;
     }
 
-    let data = { code, desc, maxqty, physical, diff: maxqty - physical };
+    let data = { code, desc, maxqty, physical, diff: maxqty - physical, wing }; // ✅ Include Wing in data
 
     if (id) {
         let { error } = await supabase.from("inventory").update(data).eq("id", id);
@@ -106,12 +109,13 @@ async function addItem() {
 }
 
 // ✅ Function to edit an item (populate form)
-function editItem(id, code, desc, maxqty, physical) {
+function editItem(id, code, desc, maxqty, physical, wing) {
     document.getElementById("item_id").value = id;
     document.getElementById("code").value = code;
     document.getElementById("desc").value = desc;
     document.getElementById("maxqty").value = maxqty;
     document.getElementById("physical").value = physical;
+    document.getElementById("wing").value = wing; // ✅ Populate Wing field
 }
 
 // ✅ Function to delete an item
@@ -131,6 +135,7 @@ function clearForm() {
     document.getElementById("desc").value = "";
     document.getElementById("maxqty").value = "";
     document.getElementById("physical").value = "";
+    document.getElementById("wing").value = "Adult ICU"; // ✅ Reset Wing dropdown
 }
 
 // ✅ Load inventory on page load
