@@ -17,10 +17,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ✅ Function to load inventory from Supabase
 async function loadItems() {
     let searchQuery = document.getElementById("search")?.value.trim();
-    let query = supabase.from("inventory").select("*");
+    let selectedWing = document.getElementById("wingFilter")?.value; // ✅ Get selected wing filter
+
+    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing"); // ✅ Explicitly selecting "wing" field
 
     if (searchQuery) {
         query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
+    }
+
+    if (selectedWing && selectedWing !== "") {
+        query = query.eq("wing", selectedWing); // ✅ Filter by selected wing
     }
 
     let { data, error } = await query;
@@ -35,7 +41,7 @@ async function loadItems() {
     data.forEach(item => {
         let row = document.createElement("tr");
         row.innerHTML = `
-            <td>${item.id}</td> <!-- ✅ Now properly displaying the ID -->
+            <td>${item.id}</td> 
             <td>${item.code}</td>
             <td>${item.desc}</td>
             <td>${item.maxqty}</td>
@@ -44,7 +50,7 @@ async function loadItems() {
                     onchange="updatePhysical(${item.id}, this.value, ${item.maxqty})">
             </td>
             <td id="diff-${item.id}">${item.diff}</td>
-            <td>${item.wing}</td> <!-- ✅ Now properly displaying the Wing -->
+            <td>${item.wing || "N/A"}</td> <!-- ✅ Ensured Wing is displayed -->
             <td>
                 <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
@@ -115,7 +121,7 @@ function editItem(id, code, desc, maxqty, physical, wing) {
     document.getElementById("desc").value = desc;
     document.getElementById("maxqty").value = maxqty;
     document.getElementById("physical").value = physical;
-    document.getElementById("wing").value = wing; // ✅ Populate Wing field
+    document.getElementById("wing").value = wing || "Adult ICU"; // ✅ Populate Wing field
 }
 
 // ✅ Function to delete an item
