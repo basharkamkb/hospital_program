@@ -14,19 +14,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadItems();
 });
 
+
 // ✅ Function to load inventory from Supabase
 async function loadItems() {
     let searchQuery = document.getElementById("search")?.value.trim();
-    let selectedWing = document.getElementById("wingFilter")?.value; // ✅ Get selected wing filter
+    let selectedWing = document.getElementById("wingFilter")?.value;
 
-    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing"); // ✅ Ensure wing is selected
+    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing");
 
     if (searchQuery) {
         query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
     }
 
     if (selectedWing && selectedWing !== "") {
-        query = query.eq("wing", selectedWing); // ✅ Filter by selected wing
+        query = query.eq("wing", selectedWing);
     }
 
     let { data, error } = await query;
@@ -59,6 +60,7 @@ async function loadItems() {
         tbody.appendChild(row);
     });
 }
+
 // ✅ Function to update the "Physical" quantity and recalculate "Difference"
 async function updatePhysical(id, newPhysical, maxqty) {
     let physical = parseInt(newPhysical);
@@ -67,22 +69,20 @@ async function updatePhysical(id, newPhysical, maxqty) {
         return;
     }
 
-    let diff = maxqty - physical; // ✅ Difference is recalculated
+    let diff = maxqty - physical;
 
-    // ✅ Fetch the full record first to preserve all fields
     let { data, error } = await supabase.from("inventory").select("*").eq("id", id).single();
     if (error) {
         console.error("Error fetching item before update:", error);
         return;
     }
 
-    // ✅ Ensure we update only "physical" and "diff" without deleting other fields
     let updatedData = {
         code: data.code,
         desc: data.desc,
         maxqty: data.maxqty,
-        physical: physical, // ✅ Update physical
-        diff: diff, // ✅ Update difference
+        physical: physical,
+        diff: diff,
         wing: data.wing
     };
 
@@ -92,11 +92,10 @@ async function updatePhysical(id, newPhysical, maxqty) {
         return;
     }
 
-    // ✅ Update "Difference" column dynamically without reloading
     document.getElementById(`diff-${id}`).textContent = diff;
 }
 
-
+// ✅ Function to add or update an inventory item
 async function addItem() {
     let idField = document.getElementById("item_id");
     let codeField = document.getElementById("code");
@@ -105,13 +104,12 @@ async function addItem() {
     let physicalField = document.getElementById("physical");
     let wingField = document.getElementById("wing");
 
-    // ✅ Check if fields exist before accessing .value
     if (!codeField || !descField || !maxqtyField || !physicalField || !wingField) {
         console.error("One or more input fields are missing in the HTML.");
         alert("Error: Some input fields are missing. Please check the form.");
         return;
     }
-}
+
     let id = idField.value;
     let code = codeField.value.trim();
     let desc = descField.value.trim();
@@ -124,8 +122,8 @@ async function addItem() {
         return;
     }
 
-    let diff = maxqty - physical; // ✅ Difference is calculated but maxqty stays the same
-    let data = { code, desc, maxqty, physical, diff, wing }; // ✅ Include Wing in data
+    let diff = maxqty - physical;
+    let data = { code, desc, maxqty, physical, diff, wing };
 
     try {
         if (id) {
@@ -142,8 +140,7 @@ async function addItem() {
         console.error("Error saving item:", error);
         alert("Error saving item. Please check the console for details.");
     }
-
-
+} // ✅ Closing bracket was missing, now added
 
 // ✅ Function to edit an item (populate form)
 function editItem(id, code, desc, maxqty, physical, wing) {
@@ -152,15 +149,14 @@ function editItem(id, code, desc, maxqty, physical, wing) {
     document.getElementById("desc").value = desc;
     document.getElementById("maxqty").value = maxqty;
     document.getElementById("physical").value = physical;
-    
-    let wingDropdown = document.getElementById("wing"); // ✅ Get the Wing dropdown
+
+    let wingDropdown = document.getElementById("wing");
     if (wingDropdown) {
-        wingDropdown.value = wing || "Adult ICU"; // ✅ Assign value if element exists
+        wingDropdown.value = wing || "Adult ICU";
     } else {
         console.error("Wing dropdown not found in the HTML.");
     }
 }
-
 
 // ✅ Function to delete an item
 async function deleteItem(id) {
@@ -179,7 +175,7 @@ function clearForm() {
     document.getElementById("desc").value = "";
     document.getElementById("maxqty").value = "";
     document.getElementById("physical").value = "";
-    document.getElementById("wing").value = "Adult ICU"; // ✅ Reset Wing dropdown
+    document.getElementById("wing").value = "Adult ICU";
 }
 
 // ✅ Load inventory on page load
