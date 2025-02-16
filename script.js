@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadItems() {
     let { data, error } = await supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
-desc = desc.toString().replace(/'/g, "\\'").replace(/\(/g, "&#40;").replace(/\)/g, "&#41;");
+
 
 
     if (error) {
@@ -36,7 +36,7 @@ desc = desc.toString().replace(/'/g, "\\'").replace(/\(/g, "&#40;").replace(/\)/
         let icu1 = item.icu1 ?? 0;
         let icu2 = item.icu2 ?? 0;
         let desc = item.desc ?? '';
-
+desc = desc.toString().replace(/'/g, "\\'").replace(/\(/g, "&#40;").replace(/\)/g, "&#41;");
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${item.id}</td> 
