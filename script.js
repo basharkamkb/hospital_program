@@ -99,33 +99,30 @@ async function updatePhysical(id, newPhysical, maxqty) {
 
 // ✅ Function to add or update an inventory item
 async function addItem() {
-    let idField = document.getElementById("item_id");
-    let codeField = document.getElementById("code");
-    let descField = document.getElementById("desc");
-    let maxqtyField = document.getElementById("maxqty");
-    let physicalField = document.getElementById("physical");
-    let wingField = document.getElementById("wing");
+    let id = document.getElementById("item_id").value;
+    let code = document.getElementById("code").value.trim();
+    let desc = document.getElementById("desc").value.trim();
+    let maxqty = parseInt(document.getElementById("maxqty").value);
+    let wing = document.getElementById("wing").value;
 
-    if (!codeField || !descField || !maxqtyField || !physicalField || !wingField) {
-        console.error("One or more input fields are missing in the HTML.");
-        alert("Error: Some input fields are missing. Please check the form.");
-        return;
+    let physical, icu1 = 0, icu2 = 0;
+
+    if (wing === "Adult ICU") {
+        icu1 = parseInt(document.getElementById("icu1").value) || 0;
+        icu2 = parseInt(document.getElementById("icu2").value) || 0;
+        physical = icu1 + icu2; // ✅ Total ICU physical
+    } else {
+        physical = parseInt(document.getElementById("physical").value);
     }
-
-    let id = idField.value;
-    let code = codeField.value.trim();
-    let desc = descField.value.trim();
-    let maxqty = parseInt(maxqtyField.value);
-    let physical = parseInt(physicalField.value);
-    let wing = wingField.value;
 
     if (!code || !desc || isNaN(maxqty) || isNaN(physical)) {
         alert("Please fill in all fields!");
         return;
     }
 
-    let diff = maxqty - physical;
-    let data = { code, desc, maxqty, physical, diff, wing };
+    let diff = maxqty - physical; // ✅ Difference calculation
+
+    let data = { code, desc, maxqty, physical, diff, wing, icu1, icu2 }; // ✅ Include ICU data
 
     try {
         if (id) {
@@ -142,7 +139,7 @@ async function addItem() {
         console.error("Error saving item:", error);
         alert("Error saving item. Please check the console for details.");
     }
-} // ✅ Closing bracket was missing, now added
+}
 
 // ✅ Function to edit an item (populate form)
 function editItem(id, code, desc, maxqty, physical, wing) {
