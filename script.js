@@ -66,33 +66,22 @@ async function loadItems() {
     });
 }
 
-
-// ✅ Function to update the "Physical" quantity and recalculate "Difference"
-async function updatePhysical(id, newPhysical, maxqty) {
+async function updatePhysical(id, newPhysical) {
     let physical = parseInt(newPhysical);
     if (isNaN(physical) || physical < 0) {
         alert("Invalid quantity. Please enter a valid number.");
         return;
     }
 
-    let diff = maxqty - physical;
-
-    let { data, error } = await supabase.from("inventory").select("*").eq("id", id).single();
+    let { data, error } = await supabase.from("inventory").select("maxqty").eq("id", id).single();
     if (error) {
-        console.error("Error fetching item before update:", error);
+        console.error("Error fetching maxqty:", error);
         return;
     }
 
-    let updatedData = {
-        code: data.code,
-        desc: data.desc,
-        maxqty: data.maxqty,
-        physical: physical,
-        diff: diff,
-        wing: data.wing
-    };
+    let diff = data.maxqty - physical;
 
-    let { error: updateError } = await supabase.from("inventory").update(updatedData).eq("id", id);
+    let { error: updateError } = await supabase.from("inventory").update({ physical, diff }).eq("id", id);
     if (updateError) {
         console.error("Error updating physical quantity:", updateError);
         return;
