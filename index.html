@@ -36,11 +36,15 @@
         <input type="text" id="code" placeholder="Code">
         <input type="text" id="desc" placeholder="desc">
         <input type="number" id="maxqty" placeholder="Max Quantity">
-        <div id="icu-fields" style="display: none;">
+        
+<div id="physical-field">
+    <input type="number" id="physical" placeholder="Physical Quantity">
+</div>
+
+<div id="icu-fields" style="display: none;">
     <input type="number" id="icu1" placeholder="Adult ICU 1 Quantity">
     <input type="number" id="icu2" placeholder="Adult ICU 2 Quantity">
 </div>
-        <input type="number" id="physical" placeholder="Physical Quantity">
        <select id="wing" onchange="toggleICUFields()">
     <option value="Adult ICU">Adult ICU</option>
     <option value="Maternity 1">Maternity 1</option>
