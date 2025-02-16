@@ -15,17 +15,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-// ✅ Function to load inventory from Supabase
+// ✅ Function to load inventory from Supabase and filter by search & wing
 async function loadItems() {
     let searchQuery = document.getElementById("search")?.value.trim();
-    let selectedWing = document.getElementById("wingFilter")?.value;
+    let selectedWing = document.getElementById("wingFilter")?.value; // ✅ Get selected wing filter
 
     let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing");
 
+    // ✅ Filter by search query
     if (searchQuery) {
         query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
     }
 
+    // ✅ Filter by selected wing
     if (selectedWing && selectedWing !== "") {
         query = query.eq("wing", selectedWing);
     }
