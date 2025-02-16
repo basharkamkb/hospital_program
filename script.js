@@ -204,5 +204,6 @@ async function updateICU(id, newValue, field) {
     loadItems();
 }
 
+
 // ✅ Load inventory on page load
 loadItems();
