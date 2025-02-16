@@ -90,7 +90,6 @@ async function updatePhysical(id, newPhysical) {
     document.getElementById(`diff-${id}`).textContent = diff;
 }
 
-// ✅ Function to add or update an inventory item
 async function addItem() {
     let id = document.getElementById("item_id").value;
     let code = document.getElementById("code").value.trim();
@@ -103,7 +102,7 @@ async function addItem() {
     if (wing === "Adult ICU") {
         icu1 = parseInt(document.getElementById("icu1").value) || 0;
         icu2 = parseInt(document.getElementById("icu2").value) || 0;
-        physical = icu1 + icu2; // ✅ Total ICU physical
+        physical = icu1 + icu2;
     } else {
         physical = parseInt(document.getElementById("physical").value);
     }
@@ -113,9 +112,8 @@ async function addItem() {
         return;
     }
 
-    let diff = maxqty - physical; // ✅ Difference calculation
-
-    let data = { code, desc, maxqty, physical, diff, wing, icu1, icu2 }; // ✅ Include ICU data
+    let diff = maxqty - physical;
+    let data = { code, desc, maxqty, physical, diff, wing, icu1, icu2 };
 
     try {
         if (id) {
@@ -133,6 +131,7 @@ async function addItem() {
         alert("Error saving item. Please check the console for details.");
     }
 }
+
 
 // ✅ Function to edit an item (populate form)
 function editItem(id, code, desc, maxqty, physical, wing) {
