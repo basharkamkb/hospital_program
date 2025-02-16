@@ -16,20 +16,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 async function loadItems() {
-    let searchQuery = document.getElementById("search")?.value.trim();
-    let selectedWing = document.getElementById("wingFilter")?.value;
+    let { data, error } = await supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
 
-    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
-
-    if (searchQuery) {
-        query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
-    }
-
-    if (selectedWing && selectedWing !== "") {
-        query = query.eq("wing", selectedWing);
-    }
-
-    let { data, error } = await query;
     if (error) {
         console.error("Error fetching inventory:", error);
         return;
@@ -41,24 +29,30 @@ async function loadItems() {
     data.forEach(item => {
         let isICU = item.wing === "Adult ICU";
 
+        // ✅ Ensure null values are replaced with defaults
+        let physical = item.physical ?? 0;
+        let icu1 = item.icu1 ?? 0;
+        let icu2 = item.icu2 ?? 0;
+        let desc = item.desc ?? '';
+
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${item.id}</td> 
             <td>${item.code}</td>
-            <td>${item.desc}</td>
+            <td>${desc}</td>
             <td>${item.maxqty}</td>
             ${isICU 
-                ? `<td><input type="number" value="${item.icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
-                   <td><input type="number" value="${item.icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
+                ? `<td><input type="number" value="${icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
+                   <td><input type="number" value="${icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
                 : `<td>-</td><td>-</td>`}
             <td>${isICU 
-                ? item.physical // Physical is calculated for ICU
-                : `<input type="number" value="${item.physical}" onchange="updatePhysical(${item.id}, this.value)">`}
+                ? physical 
+                : `<input type="number" value="${physical}" onchange="updatePhysical(${item.id}, this.value)">`}
             </td>
-            <td id="diff-${item.id}">${item.diff}</td>
+            <td id="diff-${item.id}">${item.diff ?? 0}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}', ${item.icu1}, ${item.icu2}')">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${desc}', ${item.maxqty}, ${physical}, '${item.wing}', ${icu1}, ${icu2}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
