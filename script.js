@@ -61,25 +61,26 @@ async function loadItems() {
             <td>${item.maxqty}</td>
             
             ${isICU 
-                ? `<td><input type="number" value="${item.icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
-                   <td><input type="number" value="${item.icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
+                ? `<td><input type="number" value="${item.icu1 || 0}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
+                   <td><input type="number" value="${item.icu2 || 0}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
                 : `<td>-</td><td>-</td>`}
             
             <td>${isICU 
                 ? item.icu1 + item.icu2 // ✅ Sum ICU1 + ICU2 for total Physical
-                : `<input type="number" value="${item.physical}" onchange="updatePhysical(${item.id}, this.value)">`}
+                : `<input type="number" value="${item.physical || 0}" onchange="updatePhysical(${item.id}, this.value)">`}
             </td>
 
-            <td id="diff-${item.id}">${item.diff}</td>
+            <td id="diff-${item.id}">${item.diff || 0}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}', ${item.icu1}, ${item.icu2}')">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}', '${item.wing}', ${item.icu1 || 0}, ${item.icu2 || 0}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
         tbody.appendChild(row);
     });
 }
+
 
 async function updatePhysical(id, newPhysical) {
     let physical = parseInt(newPhysical);
