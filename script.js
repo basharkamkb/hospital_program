@@ -18,16 +18,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ✅ Function to load inventory from Supabase and filter by search & wing
 async function loadItems() {
     let searchQuery = document.getElementById("search")?.value.trim();
-    let selectedWing = document.getElementById("wingFilter")?.value; // ✅ Get selected wing filter
+    let selectedWing = document.getElementById("wingFilter")?.value;
 
-    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing");
+    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
 
-    // ✅ Filter by search query
     if (searchQuery) {
         query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
     }
 
-    // ✅ Filter by selected wing
     if (selectedWing && selectedWing !== "") {
         query = query.eq("wing", selectedWing);
     }
@@ -42,26 +40,30 @@ async function loadItems() {
     tbody.innerHTML = ""; // Clear table
 
     data.forEach(item => {
+        let icuFields = item.wing === "Adult ICU"
+            ? `<td><input type="number" value="${item.icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
+               <td><input type="number" value="${item.icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
+            : `<td>-</td><td>-</td>`;
+
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${item.id}</td> 
             <td>${item.code}</td>
             <td>${item.desc}</td>
             <td>${item.maxqty}</td>
-            <td>
-                <input type="number" value="${item.physical}" 
-                    onchange="updatePhysical(${item.id}, this.value, ${item.maxqty})">
-            </td>
+            ${icuFields}
+            <td>${item.physical}</td>
             <td id="diff-${item.id}">${item.diff}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}')">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}', ${item.icu1}, ${item.icu2})">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
         tbody.appendChild(row);
     });
 }
+
 
 // ✅ Function to update the "Physical" quantity and recalculate "Difference"
 async function updatePhysical(id, newPhysical, maxqty) {
