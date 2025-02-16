@@ -13,40 +13,43 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 document.addEventListener("DOMContentLoaded", async () => {
     await loadItems();
 });
-
 async function loadItems() {
     let searchField = document.getElementById("search");
+    let wingFilter = document.getElementById("wingFilter");
 
-    // ✅ Check if search field exists before accessing .value
-    if (!searchField) {
-        console.error("Search input field is missing in the HTML.");
+    if (!searchField || !wingFilter) {
+        console.error("Search input or Wing filter is missing in the HTML.");
         return;
     }
 
     let searchQuery = searchField.value.trim();
-    let selectedWing = document.getElementById("wingFilter")?.value;
+    let selectedWing = wingFilter.value;
 
-    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
+    let query = supabase.from("inventory").select("*"); // ✅ Ensure all fields are selected
 
-    // ✅ Search by code or description
+    // ✅ Apply search condition if there's a search query
     if (searchQuery) {
         query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
     }
 
-    // ✅ Filter by selected wing
+    // ✅ Apply wing filter if a wing is selected
     if (selectedWing && selectedWing !== "") {
         query = query.eq("wing", selectedWing);
     }
 
+    // ✅ Fetch the data
     let { data, error } = await query;
     if (error) {
         console.error("Error fetching inventory:", error);
+        alert("Error fetching inventory data. Check the console.");
         return;
     }
 
+    // ✅ Clear the table before inserting new rows
     let tbody = document.getElementById("inventory-list");
-    tbody.innerHTML = ""; // Clear table
+    tbody.innerHTML = ""; 
 
+    // ✅ Insert rows dynamically
     data.forEach(item => {
         let row = document.createElement("tr");
         row.innerHTML = `
