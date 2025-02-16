@@ -111,7 +111,7 @@ async function addItem() {
         alert("Error: Some input fields are missing. Please check the form.");
         return;
     }
-
+}
     let id = idField.value;
     let code = codeField.value.trim();
     let desc = descField.value.trim();
