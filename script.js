@@ -51,17 +51,29 @@ async function loadItems() {
 
     // ✅ Insert rows dynamically
     data.forEach(item => {
+        let isICU = item.wing === "Adult ICU";
+
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${item.id}</td> 
             <td>${item.code}</td>
             <td>${item.desc}</td>
             <td>${item.maxqty}</td>
-            <td>${item.physical}</td>
+            
+            ${isICU 
+                ? `<td><input type="number" value="${item.icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
+                   <td><input type="number" value="${item.icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
+                : `<td>-</td><td>-</td>`}
+            
+            <td>${isICU 
+                ? item.icu1 + item.icu2 // ✅ Sum ICU1 + ICU2 for total Physical
+                : `<input type="number" value="${item.physical}" onchange="updatePhysical(${item.id}, this.value)">`}
+            </td>
+
             <td id="diff-${item.id}">${item.diff}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}')">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}', ${item.icu1}, ${item.icu2}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
