@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadItems() {
     let { data, error } = await supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
-let encodedDesc = encodeURIComponent(desc);
+desc = desc.replace(/'/g, "\\'").replace(/\(/g, "&#40;").replace(/\)/g, "&#41;");
+
 
     if (error) {
         console.error("Error fetching inventory:", error);
@@ -53,7 +54,7 @@ let encodedDesc = encodeURIComponent(desc);
             <td id="diff-${item.id}">${item.diff ?? 0}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-               <button onclick="editItem(${item.id}, '${item.code}', decodeURIComponent('${encodedDesc}'), ${item.maxqty}, ${physical}, '${item.wing}', ${icu1}, ${icu2}')">Edit</button>
+               <button onclick="editItem(${item.id}, '${item.code}', '${desc}', ${item.maxqty}, ${physical}, '${item.wing}', ${icu1}, ${icu2}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
