@@ -169,6 +169,19 @@ async function deleteItem(id) {
     }
     loadItems();
 }
+function toggleICUFields() {
+    let wing = document.getElementById("wing").value;
+    let icuFields = document.getElementById("icu-fields");
+    let physicalField = document.getElementById("physical");
+
+    if (wing === "Adult ICU") {
+        icuFields.style.display = "block"; // Show ICU fields
+        physicalField.disabled = true; // Disable main physical field
+    } else {
+        icuFields.style.display = "none"; // Hide ICU fields
+        physicalField.disabled = false; // Enable main physical field
+    }
+}
 
 // ✅ Function to clear the form
 function clearForm() {
