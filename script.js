@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadItems() {
     let { data, error } = await supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
-desc = desc.replace(/'/g, "\\'").replace(/\(/g, "&#40;").replace(/\)/g, "&#41;");
+desc = desc.toString().replace(/'/g, "\\'").replace(/\(/g, "&#40;").replace(/\)/g, "&#41;");
 
 
     if (error) {
