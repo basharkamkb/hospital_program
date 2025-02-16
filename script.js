@@ -25,16 +25,16 @@ async function loadItems() {
     let searchQuery = searchField.value.trim();
     let selectedWing = wingFilter.value;
 
-    let query = supabase.from("inventory").select("*"); // ✅ Ensure all fields are selected
+    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
 
-    // ✅ Apply search condition if there's a search query
-    if (searchQuery) {
-        query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
-    }
-
-    // ✅ Apply wing filter if a wing is selected
+    // ✅ Apply wing filter first
     if (selectedWing && selectedWing !== "") {
         query = query.eq("wing", selectedWing);
+    }
+
+    // ✅ Apply search condition (only if there's a search input)
+    if (searchQuery) {
+        query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
     }
 
     // ✅ Fetch the data
