@@ -52,7 +52,7 @@ async function loadItems() {
             <td id="diff-${item.id}">${item.diff ?? 0}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${desc}', ${item.maxqty}, ${physical}, '${item.wing}', ${icu1}, ${icu2}')">Edit</button>
+               <button onclick="editItem(${item.id}, '${item.code}', &quot;${desc}&quot;, ${item.maxqty}, ${physical}, '${item.wing}', ${icu1}, ${icu2}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
