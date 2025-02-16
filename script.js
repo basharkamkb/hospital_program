@@ -14,12 +14,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadItems();
 });
 
-
 async function loadItems() {
-    let { data, error } = await supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
+    let searchField = document.getElementById("search");
 
+    // ✅ Check if search field exists before accessing .value
+    if (!searchField) {
+        console.error("Search input field is missing in the HTML.");
+        return;
+    }
 
+    let searchQuery = searchField.value.trim();
+    let selectedWing = document.getElementById("wingFilter")?.value;
 
+    let query = supabase.from("inventory").select("id, code, desc, maxqty, physical, diff, wing, icu1, icu2");
+
+    // ✅ Search by code or description
+    if (searchQuery) {
+        query = query.or(`code.ilike.%${searchQuery}%,desc.ilike.%${searchQuery}%`);
+    }
+
+    // ✅ Filter by selected wing
+    if (selectedWing && selectedWing !== "") {
+        query = query.eq("wing", selectedWing);
+    }
+
+    let { data, error } = await query;
     if (error) {
         console.error("Error fetching inventory:", error);
         return;
@@ -29,32 +48,17 @@ async function loadItems() {
     tbody.innerHTML = ""; // Clear table
 
     data.forEach(item => {
-        let isICU = item.wing === "Adult ICU";
-
-        // ✅ Ensure null values are replaced with defaults
-        let physical = item.physical ?? 0;
-        let icu1 = item.icu1 ?? 0;
-        let icu2 = item.icu2 ?? 0;
-        let desc = item.desc ?? '';
-desc = desc.toString().replace(/'/g, "\\'").replace(/\(/g, "&#40;").replace(/\)/g, "&#41;");
         let row = document.createElement("tr");
         row.innerHTML = `
             <td>${item.id}</td> 
             <td>${item.code}</td>
-            <td>${desc}</td>
+            <td>${item.desc}</td>
             <td>${item.maxqty}</td>
-            ${isICU 
-                ? `<td><input type="number" value="${icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
-                   <td><input type="number" value="${icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
-                : `<td>-</td><td>-</td>`}
-            <td>${isICU 
-                ? physical 
-                : `<input type="number" value="${physical}" onchange="updatePhysical(${item.id}, this.value)">`}
-            </td>
-            <td id="diff-${item.id}">${item.diff ?? 0}</td>
+            <td>${item.physical}</td>
+            <td id="diff-${item.id}">${item.diff}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-               <button onclick="editItem(${item.id}, '${item.code}', '${desc}', ${item.maxqty}, ${physical}, '${item.wing}', ${icu1}, ${icu2})">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
