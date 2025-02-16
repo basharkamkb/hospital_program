@@ -15,6 +15,21 @@
 
     <!-- Search -->
     <input type="text" id="search" placeholder="Search by Code or desc">
+    <!-- Search & Wing Filter Section -->
+<div class="search-section">
+    <input type="text" id="search" placeholder="Search by Code or Description">
+    
+    <!-- ✅ Wing Dropdown for Filtering -->
+    <select id="wingFilter" onchange="loadItems()">
+        <option value="">All Wings</option>
+        <option value="Adult ICU">Adult ICU</option>
+        <option value="Maternity 1">Maternity 1</option>
+        <option value="Maternity 2">Maternity 2</option>
+    </select>
+
+    <button onclick="loadItems()">Search</button>
+</div>
+
     <button onclick="loadItems()">Search</button>
 
     <!-- Add/Edit Form -->
