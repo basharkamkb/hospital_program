@@ -191,6 +191,27 @@ function clearForm() {
     document.getElementById("physical").value = "";
     document.getElementById("wing").value = "Adult ICU";
 }
+async function updateICU(id, newValue, field) {
+    let value = parseInt(newValue) || 0;
+
+    let { data, error } = await supabase.from("inventory").select("icu1, icu2, maxqty").eq("id", id).single();
+    if (error) {
+        console.error("Error fetching item:", error);
+        return;
+    }
+
+    let updatedData = { [field]: value };
+    updatedData.physical = (field === "icu1" ? value + data.icu2 : data.icu1 + value);
+    updatedData.diff = data.maxqty - updatedData.physical;
+
+    let { error: updateError } = await supabase.from("inventory").update(updatedData).eq("id", id);
+    if (updateError) {
+        console.error("Error updating ICU field:", updateError);
+        return;
+    }
+
+    loadItems();
+}
 
 // ✅ Load inventory on page load
 loadItems();
