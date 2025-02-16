@@ -202,6 +202,19 @@ async function updateICU(id, newValue, field) {
 
     loadItems();
 }
+function toggleICUFields() {
+    let wing = document.getElementById("wing").value;
+    let icuFields = document.getElementById("icu-fields");
+    let physicalField = document.getElementById("physical-field");
+
+    if (wing === "Adult ICU") {
+        icuFields.style.display = "block"; // Show ICU fields
+        physicalField.style.display = "none"; // Hide normal physical field
+    } else {
+        icuFields.style.display = "none"; // Hide ICU fields
+        physicalField.style.display = "block"; // Show normal physical field
+    }
+}
 
 
 // ✅ Load inventory on page load
