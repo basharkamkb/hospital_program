@@ -231,6 +231,14 @@ function toggleICUFields() {
         physicalField.style.display = "block"; // Show normal physical field
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("search-btn").addEventListener("click", () => {
+        loadItems(); // ✅ Immediately refreshes table on search
+    });
+
+    loadItems(); // ✅ Load items when the page is first loaded
+});
+
 
 
 // ✅ Load inventory on page load
