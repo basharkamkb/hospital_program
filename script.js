@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-// ✅ Function to load inventory from Supabase and filter by search & wing
 async function loadItems() {
     let searchQuery = document.getElementById("search")?.value.trim();
     let selectedWing = document.getElementById("wingFilter")?.value;
@@ -40,10 +39,7 @@ async function loadItems() {
     tbody.innerHTML = ""; // Clear table
 
     data.forEach(item => {
-        let icuFields = item.wing === "Adult ICU"
-            ? `<td><input type="number" value="${item.icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
-               <td><input type="number" value="${item.icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
-            : `<td>-</td><td>-</td>`;
+        let isICU = item.wing === "Adult ICU";
 
         let row = document.createElement("tr");
         row.innerHTML = `
@@ -51,12 +47,18 @@ async function loadItems() {
             <td>${item.code}</td>
             <td>${item.desc}</td>
             <td>${item.maxqty}</td>
-            ${icuFields}
-            <td>${item.physical}</td>
+            ${isICU 
+                ? `<td><input type="number" value="${item.icu1}" onchange="updateICU(${item.id}, this.value, 'icu1')"></td>
+                   <td><input type="number" value="${item.icu2}" onchange="updateICU(${item.id}, this.value, 'icu2')"></td>`
+                : `<td>-</td><td>-</td>`}
+            <td>${isICU 
+                ? item.physical // Physical is calculated for ICU
+                : `<input type="number" value="${item.physical}" onchange="updatePhysical(${item.id}, this.value)">`}
+            </td>
             <td id="diff-${item.id}">${item.diff}</td>
             <td>${item.wing || "N/A"}</td> 
             <td>
-                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}', ${item.icu1}, ${item.icu2})">Edit</button>
+                <button onclick="editItem(${item.id}, '${item.code}', '${item.desc}', ${item.maxqty}, ${item.physical}, '${item.wing}', ${item.icu1}, ${item.icu2}')">Edit</button>
                 <button onclick="deleteItem(${item.id})">Delete</button>
             </td>
         `;
